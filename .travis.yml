@@ -3,23 +3,23 @@ services:
   - docker
 
 before_install:
-  - docker build -t caelestis/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t sergeyshchemenok/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run caelestis/react-test npm run test -- --coverage
+  - docker run sergeyshchemenok/react-test npm run test -- --coverage
 
 after_success:
-  - docker build -t caelestis/multi-client ./client
-  - docker build -t caelestis/multi-nginx ./nginx
-  - docker build -t caelestis/multi-server ./server
-  - docker build -t caelestis/multi-worker ./worker
+  - docker build -t sergeyshchemenok/multi-client ./client
+  - docker build -t sergeyshchemenok/multi-nginx ./nginx
+  - docker build -t sergeyshchemenok/multi-server ./server
+  - docker build -t sergeyshchemenok/multi-worker ./worker
   # login to docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # take those images and push them to docker hub
-  - docker push caelestis/multi-client
-  - docker push caelestis/multi-nginx
-  - docker push caelestis/multi-server
-  - docker push caelestis/multi-worker
+  - docker push sergeyshchemenok/multi-client
+  - docker push sergeyshchemenok/multi-nginx
+  - docker push sergeyshchemenok/multi-server
+  - docker push sergeyshchemenok/multi-worker
 
 # deploy:
 #   provider: elasticbeanstalk
