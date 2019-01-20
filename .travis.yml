@@ -1,0 +1,35 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t caelestis/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run caelestis/react-test npm run test -- --coverage
+
+after_success:
+  - docker build -t caelestis/multi-client ./client
+  - docker build -t caelestis/multi-nginx ./nginx
+  - docker build -t caelestis/multi-server ./server
+  - docker build -t caelestis/multi-worker ./worker
+  # login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # take those images and push them to docker hub
+  - docker push caelestis/multi-client
+  - docker push caelestis/multi-nginx
+  - docker push caelestis/multi-server
+  - docker push caelestis/multi-worker
+
+# deploy:
+#   provider: elasticbeanstalk
+#   region: "us-east-2"
+#   app: "docker-react"
+#   env: DockerReact-env
+#   bucket_name: "elasticbeanstalk-us-east-2-371920526126"
+#   bucket_path: "docker-react"
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key:
+#     secure: "$AWS_SECRET_KEY"
